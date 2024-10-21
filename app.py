@@ -7,7 +7,6 @@ Original file is located at
     https://colab.research.google.com/drive/15u13zvvMNKNaCtIxiepGw8_ZqsnCFSwM
 """
 
-!pip install streamlit transformers torch
 
 # Commented out IPython magic to ensure Python compatibility.
 # %%writefile app.py
