@@ -1,22 +1,28 @@
 import streamlit as st
-from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
+from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM
+
+# Load the translation pipeline
+pipe = pipeline("text2text-generation", model="ZainAli60/English-to-Urdu")
+
+# Load the model and tokenizer directly
+tokenizer = AutoTokenizer.from_pretrained("ZainAli60/English-to-Urdu")
+model = AutoModelForSeq2SeqLM.from_pretrained("ZainAli60/English-to-Urdu")
 
 # Streamlit app layout
-st.title("English to Roman Urdu Chatbot")
-st.write("Enter English text below and click the button to generate a response in Roman Urdu.")
+st.title("English to Urdu Translation")
+st.write("Enter English text below and click the button to translate it to Urdu.")
 
 # Text input
 english_text = st.text_area("Input English Text")
 
 # Button for translation
-if st.button("Generate"):
+if st.button("Translate"):
     if english_text:
-        # Load model and tokenizer only when the button is clicked
-        pipe = pipeline("text-generation", model="Alisaeed001/Llama-2-7b-chat-finetune")
-        response = pipe(english_text, max_length=100, num_return_sequences=1)[0]['generated_text']
+        # Generate Urdu translation
+        translated = pipe(english_text, max_length=100, num_return_sequences=1)[0]['generated_text']
         
         # Display result
-        st.subheader("Generated Response:")
-        st.write(response)
+        st.subheader("Translated Text:")
+        st.write(translated)
     else:
-        st.error("Please enter some English text.")
+        st.error("Please enter some English text to translate.")
