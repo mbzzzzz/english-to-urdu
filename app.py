@@ -1,15 +1,16 @@
 import streamlit as st
-import torch
-from transformers import MBart50TokenizerFast, MBartForConditionalGeneration
+from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
 
-# Load the fine-tuned model
-model_name = "abdulwaheed1/english-to-urdu-translation-mbart"
-tokenizer = MBart50TokenizerFast.from_pretrained(model_name, src_lang="en_XX", tgt_lang="ur_PK")
-model = MBartForConditionalGeneration.from_pretrained(model_name)
+# Load the translation pipeline
+pipe = pipeline("text-generation", model="Alisaeed001/Llama-2-7b-English-RomanUrdu-finetune")
+
+# Load the model and tokenizer directly
+tokenizer = AutoTokenizer.from_pretrained("Alisaeed001/Llama-2-7b-English-RomanUrdu-finetune")
+model = AutoModelForCausalLM.from_pretrained("Alisaeed001/Llama-2-7b-English-RomanUrdu-finetune")
 
 # Streamlit app layout
-st.title("English to Urdu Translation")
-st.write("Enter English text below and click the button to translate it to Urdu.")
+st.title("English to Roman Urdu Translation")
+st.write("Enter English text below and click the button to translate it to Roman Urdu.")
 
 # Text input
 english_text = st.text_area("Input English Text")
@@ -17,18 +18,11 @@ english_text = st.text_area("Input English Text")
 # Button for translation
 if st.button("Translate"):
     if english_text:
-        # Tokenization
-        inputs = tokenizer(english_text, return_tensors="pt", padding=True, truncation=True, max_length=512)
-
-        # Generate translation
-        with torch.no_grad():
-            translated_ids = model.generate(**inputs)
-
-        # Decode translation
-        urdu_translation = tokenizer.decode(translated_ids[0], skip_special_tokens=True)
-
+        # Generate Roman Urdu translation
+        translated_text = pipe(english_text, max_length=100, num_return_sequences=1)[0]['generated_text']
+        
         # Display result
         st.subheader("Translated Text:")
-        st.write(urdu_translation)
+        st.write(translated_text)
     else:
         st.error("Please enter some English text to translate.")
